@@ -1,5 +1,7 @@
 package com.hsinpingweng.shopping.model;
 
+import java.util.List;
+
 import com.hsinpingweng.shopping.model.data.Page;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,5 +16,7 @@ public interface PageRepository extends JpaRepository<Page, Integer> {
     Page findBySlugAndIdNot(String slug, int id);
     // @Query("SELECT p FROM Page p WHERE p.id != :id and p.slug = :slug")
     // Page findBySlug(int id, String slug);
+
+    List<Page> findAllByOrderBySortingAsc();
 
 }
