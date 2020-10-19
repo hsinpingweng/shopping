@@ -11,4 +11,8 @@ public interface PageRepository extends JpaRepository<Page, Integer> {
     // spring data jpa query creation from method name
     Page findBySlug(String slug);
 
+    Page findBySlugAndIdNot(String slug, int id);
+    // @Query("SELECT p FROM Page p WHERE p.id != :id and p.slug = :slug")
+    // Page findBySlug(int id, String slug);
+
 }
