@@ -117,18 +117,6 @@ public class AdminPagesController {
         return "redirect:/admin/pages/edit/" + page.getId();
     }
 
-
-    @GetMapping("/delete/{id}")
-    public String delete(@PathVariable int id, RedirectAttributes redirectAttributes){
-
-        pageRepo.deleteById(id);
-
-        redirectAttributes.addFlashAttribute("message", "page deleted!");
-        redirectAttributes.addFlashAttribute("alertClass", "alert-success");
-
-        return "redirect:/admin/pages";
-    }
-
     @PostMapping("/reorder")
     public @ResponseBody String reorder(@RequestParam("id[]") int[] id){
 
@@ -143,6 +131,19 @@ public class AdminPagesController {
         }
 
         return "ok";
+    }
+
+
+
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable int id, RedirectAttributes redirectAttributes){
+
+        pageRepo.deleteById(id);
+
+        redirectAttributes.addFlashAttribute("message", "page deleted!");
+        redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+
+        return "redirect:/admin/pages";
     }
 
 }

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -55,8 +56,8 @@ public class AdminCategoriesController {
         redirectAttributes.addFlashAttribute("alertClass", "alert-success");
 
         String slug = category.getName().toLowerCase().replace(" ", "-");
-    
         Category categoryExist = categoryRepo.findByName(category.getName());
+
         if (categoryExist != null) {
             // add value in session
             redirectAttributes.addFlashAttribute("message", "Category exists!");
@@ -69,5 +70,59 @@ public class AdminCategoriesController {
         }
 
         return "redirect:/admin/categories/add";
+    }
+
+    
+    @GetMapping("/edit/{id}")
+    public String edit(@PathVariable int id, Model model) {
+
+        Category category = categoryRepo.getOne(id);
+
+        model.addAttribute("category", category);
+
+        return "admin/categories/edit";
+    }
+
+
+
+    @PostMapping("/edit")
+    public String edit(@Valid Category category, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
+
+        Category categoryCurrent = categoryRepo.getOne(category.getId());
+
+        if(bindingResult.hasErrors()) {
+            model.addAttribute("categoryName", categoryCurrent.getName());
+            return "admin/categories/edit";
+        } 
+
+        redirectAttributes.addFlashAttribute("message", "Category edited");
+        redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+
+        String slug = category.getName().toLowerCase().replace(" ", "-");
+        Category categoryExist = categoryRepo.findByName(category.getName());
+        
+        if (categoryExist != null) {
+            // add value in session
+            redirectAttributes.addFlashAttribute("message", "Category exists!");
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+        } else {
+            category.setSlug(slug);
+            categoryRepo.save(category);
+        }
+
+        return "redirect:/admin/categories/edit/" + category.getId();
+    }
+
+
+
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable int id, RedirectAttributes redirectAttributes){
+
+        categoryRepo.deleteById(id);
+
+        redirectAttributes.addFlashAttribute("message", "Category deleted!");
+        redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+
+        return "redirect:/admin/categories";
     }
 }
