@@ -33,7 +33,7 @@ public class Product {
 
     private String price;
 
-    @Column(name="created_id")
+    @Column(name="category_id")
     private String categoryId;
 
     @Column(name="created_at")
