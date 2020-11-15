@@ -15,6 +15,9 @@ import com.hsinpingweng.shopping.model.data.Category;
 import com.hsinpingweng.shopping.model.data.Product;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -36,10 +40,16 @@ public class AdminProductsController {
     private CategoryRepository categoryRepo;
 
     @GetMapping
-    public String index(Model model) {
+    public String index(Model model, @RequestParam(value="page", required = false) Integer p) {
 
-        List<Product> products = productRepo.findAll();
+        int perPage = 6;
+        int page = (p != null) ? p : 0;
+
+        Pageable pageable = PageRequest.of(page, perPage);
+
+        Page<Product> products = productRepo.findAll(pageable);
         List<Category> categories = categoryRepo.findAll();
+
         HashMap<Integer, String> cats = new HashMap<>();
         for(Category cat : categories){
             cats.put(cat.getId(), cat.getName());
@@ -47,6 +57,14 @@ public class AdminProductsController {
 
         model.addAttribute("products", products);
         model.addAttribute("cats", cats);
+
+        Long count = productRepo.count();
+        double pageCount = Math.ceil((double)count / (double)perPage);
+
+        model.addAttribute("pageCount", (int)pageCount);
+        model.addAttribute("perPage", perPage);
+        model.addAttribute("count", count);
+        model.addAttribute("page", page);
 
         return "admin/products/index";
     }
