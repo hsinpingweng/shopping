@@ -23,3 +23,15 @@ div.productAdded {
 .hide {
     display: none;
 }
+
+div.overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9)
+}
+
+form#paypalform {
+    position: absolute;
+    left: -3000px;
+}
