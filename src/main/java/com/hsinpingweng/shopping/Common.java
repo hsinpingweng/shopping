@@ -1,5 +1,6 @@
 package com.hsinpingweng.shopping;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 
@@ -28,7 +29,12 @@ public class Common {
 
     
     @ModelAttribute
-    public void sharedData(Model model, HttpSession session) {
+    public void sharedData(Model model, HttpSession session, Principal principal) {
+
+        if (principal != null) {
+            model.addAttribute("principal", principal.getName());
+        }
+
 
         List<Page> pages = pageRepo.findAllByOrderBySortingAsc();
         List<Category> categories = categoryRepo.findAll();
