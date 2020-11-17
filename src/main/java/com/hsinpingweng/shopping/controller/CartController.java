@@ -2,6 +2,7 @@ package com.hsinpingweng.shopping.controller;
 
 import java.util.HashMap;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import com.hsinpingweng.shopping.model.Cart;
@@ -68,6 +69,31 @@ public class CartController {
 
         return "cart_view";
     }
+
+
+    @GetMapping("/subtract/{id}")
+    public String add(@PathVariable int id, HttpSession session, Model model, HttpServletRequest httpServletRequest) {
+    
+        Product product = productRepo.getOne(id);
+
+        HashMap<Integer, Cart> cart =  (HashMap<Integer, Cart>)session.getAttribute("cart");
+
+        int qty = cart.get(id).getQuantity();
+        if (qty == 1) {
+            cart.remove(id);
+            if (cart.size() == 0) {
+                session.removeAttribute("cart");
+            }
+        } else {
+            cart.put(id, new Cart(id, product.getName(), product.getPrice(), --qty, product.getImage()));  
+        }
+
+        String refererLink = httpServletRequest.getHeader("referer");
+
+        return "redirect:" + refererLink;
+    }
+
+
 
     @RequestMapping("/view")
     public String view(HttpSession session, Model model) {
